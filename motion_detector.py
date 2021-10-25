@@ -1,9 +1,13 @@
 import cv2, time
 
-# 1.) Create video object
+# Create video object
 video = cv2.VideoCapture(0)
 
-# 2.) Capture continuous video with while loop
+# Create a variable for the first frame - used to compare against subsequent frames captured 
+# If differences in pixellation are detected from first frame, assume that this object is an object in motion going across the camera
+first_frame = None
+
+# Capture continuous video with while loop
 while True:
 
     # Create frame object that will read what is captured by the VideoCapture object
@@ -13,9 +17,28 @@ while True:
 
     # Convert video capture to grayscale
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    
+    # Apply "Gaussian Blur"
+    # Blur the image to remove noise - better accuracy in calculations
+    # Parameters are variable to which you are applying the blur, then the width and height of the "Gaussian Kernel" -> for now, use 21 as boilerplate
+    # Last parameter is the "standard deviation" -> for now, use 0 as boilerplate
+    gray = cv2.GaussianBlur(gray, (21,21), 0)
+
+    # Assign first frame if it has not yet been assigned (i.e. is still None, based on definition above)
+    if first_frame is None:
+        first_frame = gray
+        # Proceed to next iteration of while loop using continue, since we don't have any other frames to compute differences against
+        continue
+
+    # Create "delta" frame - compare first frame with current frame
+    # Use absdiff method already built into cv2
+    delta_frame = cv2.absdiff(first_frame, gray)
 
     # Show image being captured
-    cv2.imshow("Capturing", gray)
+    cv2.imshow("Gray", gray)
+
+    # Show delta frame
+    cv2.imshow("Delta", delta_frame)
 
     # Iterate (capture next frame) every 1 millisecond
     key = cv2.waitKey(1)
