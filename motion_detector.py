@@ -40,6 +40,11 @@ while True:
     # Also, threshold method returns tuple - when using THRESH_BINARY, return second item of tuple -> boilerplate for now
     threshold_frame = cv2.threshold(delta_frame, 30, 255, cv2.THRESH_BINARY)[1]
 
+    # Smooth threshold frame (remove erroneous black splotches from white objects) using dilate method
+    # 2nd parameter is "kernel array", too sophisticated for now, so pass in none as boilerplate
+    # 3rd parameter - how many times to go through the white images and remove the noise - theoretically the larger the number, the smoother - but likely comes at the expense of performance
+    threshold_frame = cv2.dilate(threshold_frame, None, iterations=2)
+
     # Show image being captured
     cv2.imshow("Gray", gray)
 
