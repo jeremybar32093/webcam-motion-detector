@@ -34,11 +34,20 @@ while True:
     # Use absdiff method already built into cv2
     delta_frame = cv2.absdiff(first_frame, gray)
 
+    # Create "threshold" frame - if deltas are > certain threshold, assign color of pixel as white, otherwise black
+    # inputs include frame to calculate against, actual threshold (difference in pixels, color to use when threshold met (rgb -> white), and finally threshold method (boilerplate for now))
+    # Can refer to documentation for different methods to experiment with instead of THRESH_BINARY
+    # Also, threshold method returns tuple - when using THRESH_BINARY, return second item of tuple -> boilerplate for now
+    threshold_frame = cv2.threshold(delta_frame, 30, 255, cv2.THRESH_BINARY)[1]
+
     # Show image being captured
     cv2.imshow("Gray", gray)
 
     # Show delta frame
     cv2.imshow("Delta", delta_frame)
+
+    # Show threshold frame
+    cv2.imshow("Threshold", threshold_frame)
 
     # Iterate (capture next frame) every 1 millisecond
     key = cv2.waitKey(1)
