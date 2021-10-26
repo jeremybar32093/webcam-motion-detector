@@ -45,6 +45,26 @@ while True:
     # 3rd parameter - how many times to go through the white images and remove the noise - theoretically the larger the number, the smoother - but likely comes at the expense of performance
     threshold_frame = cv2.dilate(threshold_frame, None, iterations=2)
 
+    # Find contours in threshold frame - to ultimately be able to outline object
+    # Find contours method returns a tuple, so set variable as tuple
+    # Perform operation on copy as opposed to actual frame, and use cv2.RETR_EXTERNAL/cv2.CHAIN_APPROX_SIMPLE -> boilerplate for now
+    (cnts,_) = cv2.findContours(threshold_frame.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Loop through contours --> only execute subsequent code for contours with area > 1000 pixels
+    # If it's less than 1000, continue to next iteration in loop
+    # If not, execute code underneath in for loop -> calculate outer rectangle of object
+    for contour in cnts:
+        if cv2.contourArea(contour) < 1000:
+            continue
+
+        # Calculate rectangle corresponding to contours
+        (x, y, w, h) = cv2.boundingRect(contour)
+        # Add rectangle to color frame
+        # Frame to add, top left point of rectangle, bottom right point of rectangle, color of rectangle, width
+        cv2.rectangle(frame, (x, y), (x+w, y+h), (0,255,0), 3)
+
+    
+
     # Show image being captured
     cv2.imshow("Gray", gray)
 
@@ -53,6 +73,9 @@ while True:
 
     # Show threshold frame
     cv2.imshow("Threshold", threshold_frame)
+
+    # Show color frame with rectangle
+    cv2.imshow("Color Frame", frame)
 
     # Iterate (capture next frame) every 1 millisecond
     key = cv2.waitKey(1)
