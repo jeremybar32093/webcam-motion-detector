@@ -5,6 +5,7 @@ This repo contains a pyton script called *motion_detector.py* that utilizes the 
 The script will then capture a static image initially and compare the frames as the webcam is running to ultimately detect moving objects. This ends up looking something like the following:
 
 **Static Frame:**
+<br>
 ![Static Frame Example](/images/Static Frame Example.png)
 
 **Object Detected:**
